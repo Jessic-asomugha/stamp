@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Request a service | Stamp</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="request">
+<header id="site-header"></header>
+<main id="main">
+<div class="wrap" style="max-width:720px">
+  <div class="page-head"><h1>Request a service</h1><p>Four short steps. You do not need an account to start.</p></div>
+
+  <div id="req-wrap">
+    <div class="progress" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <form class="form-card" id="req-form" novalidate>
+
+      <div class="step">
+        <h2>Which service do you need?</h2>
+        <div id="svc-choices"></div>
+        <div class="btns"><span></span><button type="button" class="btn" data-next>Continue</button></div>
+      </div>
+
+      <div class="step">
+        <h2>A few quick questions</h2>
+        <p class="muted">For <b id="chosen-name"></b>. These help us reply with the right answer first time.</p>
+        <div class="field if-visa" hidden><label for="destination">Where do you want to travel?</label><input id="destination" name="destination" required><div class="err"></div></div>
+        <div class="field"><label for="timeline">When do you need this done?</label>
+          <select id="timeline" name="timeline" required><option value="">Choose one</option><option>As soon as possible</option><option>Within 2 weeks</option><option>Within 1 month</option><option>No fixed date</option></select><div class="err"></div></div>
+        <div class="field"><label for="budget">What is your budget?</label>
+          <select id="budget" name="budget" required><option value="">Choose one</option><option>Under ₦50,000</option><option>₦50,000 – ₦150,000</option><option>₦150,000 – ₦300,000</option><option>Above ₦300,000</option><option>Not sure yet. I need a quote</option></select><div class="err"></div></div>
+        <div class="field if-docs"><label>Do you have the documents ready?</label>
+          <label class="choice"><input type="radio" name="docs" value="Yes, all of them" required>Yes, all of them</label>
+          <label class="choice"><input type="radio" name="docs" value="Some of them">Some of them</label>
+          <label class="choice"><input type="radio" name="docs" value="Not yet">Not yet</label><div class="err"></div></div>
+        <div class="btns"><button type="button" class="btn ghost" data-back>Back</button><button type="button" class="btn" data-next>Continue</button></div>
+      </div>
+
+      <div class="step">
+        <h2>Your details</h2>
+        <div class="row">
+          <div class="field"><label for="fullname">Full name</label><input id="fullname" name="fullname" autocomplete="name" required><div class="err"></div></div>
+          <div class="field"><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" autocomplete="tel" required><div class="err"></div></div>
+        </div>
+        <div class="field if-schedule" hidden>
+          <div class="row">
+            <div><label for="date">Preferred date</label><input id="date" name="date" type="date" required><div class="err"></div></div>
+            <div><label for="time">Preferred time</label><select id="time" name="time" required><option value="">Choose one</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select><div class="err"></div></div>
+          </div>
+          <div style="margin-top:1rem"><label for="format">How should we meet?</label><select id="format" name="format"><option>Phone call</option><option>Video call</option><option>In person</option></select></div>
+        </div>
+        <div class="field if-docs">
+          <label for="files_input">Documents <span class="hint">(optional now, you can send more later)</span></label>
+          <div class="drop"><input id="files_input" name="files_input" type="file" multiple>
+            <p class="hint" style="margin:.5rem auto 0">Bring or upload these:</p><ul id="bring-list" style="text-align:left;display:inline-block;margin:.3rem 0 0;padding-left:1.1rem"></ul></div>
+          <ul class="files" id="file-list"></ul>
+          <p class="hint">Do not upload your NIN or BVN number itself. We never need it through this form.</p>
+        </div>
+        <div class="field"><label for="notes">Anything else we should know? <span class="hint">(optional)</span></label><textarea id="notes" name="notes"></textarea></div>
+        <div class="btns"><button type="button" class="btn ghost" data-back>Back</button><button type="button" class="btn" data-next>Continue</button></div>
+      </div>
+
+      <div class="step">
+        <h2>Confirm your email</h2>
+        <p class="muted">We send a link to this address. It confirms your request, creates your account and opens your dashboard.</p>
+        <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required><div class="err"></div></div>
+        <div class="btns"><button type="button" class="btn ghost" data-back>Back</button><button class="btn">Send request</button></div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="form-card" id="req-done" hidden>
+    <h2>Check your email</h2>
+    <p>We sent a confirmation link to <b id="sent-to"></b>. Your request <b id="req-id"></b> reaches us once you click it.</p>
+    <div class="notice"><b>Demo only:</b> no email is sent from this front-end build. Use the button below as if you clicked the link.</div>
+    <button class="btn" id="demo-confirm">Open the confirmation link</button>
+  </div>
+</div>
+</main>
+<footer id="site-footer"></footer>
+<script src="js/data.js"></script><script src="js/main.js"></script>
+</body>
+</html>

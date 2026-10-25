@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contact | Stamp</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="contact">
+<header id="site-header"></header>
+<main id="main">
+<div class="wrap">
+  <div class="page-head"><h1>Contact us</h1><p>Have a question before you start? Send us a message.</p></div>
+  <div class="contact-grid">
+    <form class="form-card" id="contact-form" novalidate>
+      <div class="field"><label for="c-name">Your name</label><input id="c-name" required><div class="err"></div></div>
+      <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" required><div class="err"></div></div>
+      <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" required></textarea><div class="err"></div></div>
+      <button class="btn">Send message</button>
+    </form>
+    <div>
+      <div class="card" style="margin-bottom:1rem">
+        <h3>Reach us directly</h3>
+        <p>Email: <a href="mailto:hello@stamp.example">hello@stamp.example</a><br>Phone: +234 000 000 0000<br>Hours: Monday to Friday, 9am to 5pm</p>
+        <p class="muted small">Placeholder details. Replace with Stamp's real contact information.</p>
+      </div>
+      <iframe class="map" title="Stamp office location" loading="lazy" src="https://www.google.com/maps?q=Abuja,Nigeria&output=embed"></iframe>
+      <p class="small"><a href="https://www.google.com/maps/search/?api=1&query=Abuja,Nigeria" target="_blank" rel="noopener">Open in Google Maps</a></p>
+    </div>
+  </div>
+</div>
+</main>
+<footer id="site-footer"></footer>
+<script src="js/data.js"></script><script src="js/main.js"></script>
+</body>
+</html>
