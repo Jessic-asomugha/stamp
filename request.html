@@ -22,14 +22,16 @@
       </div>
 
       <div class="step">
-        <h2>A few quick questions</h2>
+        <h2>About your request</h2>
         <p class="muted">For <b id="chosen-name"></b>. These help us reply with the right answer first time.</p>
+        <div class="notice" id="svc-note" hidden></div>
+        <div id="svc-steps"></div>
         <div class="field if-visa" hidden><label for="destination">Where do you want to travel?</label><input id="destination" name="destination" required><div class="err"></div></div>
         <div class="field"><label for="timeline">When do you need this done?</label>
           <select id="timeline" name="timeline" required><option value="">Choose one</option><option>As soon as possible</option><option>Within 2 weeks</option><option>Within 1 month</option><option>No fixed date</option></select><div class="err"></div></div>
         <div class="field"><label for="budget">What is your budget?</label>
           <select id="budget" name="budget" required><option value="">Choose one</option><option>Under ₦50,000</option><option>₦50,000 – ₦150,000</option><option>₦150,000 – ₦300,000</option><option>Above ₦300,000</option><option>Not sure yet. I need a quote</option></select><div class="err"></div></div>
-        <div class="field if-docs"><label>Do you have the documents ready?</label>
+        <div class="field if-docs" id="docs-field"><label>Do you have the documents ready?</label>
           <label class="choice"><input type="radio" name="docs" value="Yes, all of them" required>Yes, all of them</label>
           <label class="choice"><input type="radio" name="docs" value="Some of them">Some of them</label>
           <label class="choice"><input type="radio" name="docs" value="Not yet">Not yet</label><div class="err"></div></div>
@@ -52,7 +54,7 @@
         <div class="field if-docs">
           <label for="files_input">Documents <span class="hint">(optional now, you can send more later)</span></label>
           <div class="drop"><input id="files_input" name="files_input" type="file" multiple>
-            <p class="hint" style="margin:.5rem auto 0">Bring or upload these:</p><ul id="bring-list" style="text-align:left;display:inline-block;margin:.3rem 0 0;padding-left:1.1rem"></ul></div>
+            <div id="bring-hint"><p class="hint" style="margin:.5rem auto 0">You can upload:</p><ul id="bring-list" style="text-align:left;display:inline-block;margin:.3rem 0 0;padding-left:1.1rem"></ul></div></div>
           <ul class="files" id="file-list"></ul>
           <p class="hint">Do not upload your NIN or BVN number itself. We never need it through this form.</p>
         </div>

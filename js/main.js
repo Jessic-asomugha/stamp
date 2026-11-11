@@ -15,7 +15,9 @@ function layout() {
     <button class="nav-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
     <nav class="nav" id="nav" aria-label="Main">${links}${account}<a class="btn sm" href="request.html">Request a service</a></nav></div></header>`;
   const ff = document.getElementById('site-footer');
-  if (ff) ff.outerHTML = `<footer class="site-footer"><div class="wrap"><div class="footer-grid">
+  const compact = page === 'dashboard' || page === 'admin'; // dashboards get a one-line footer
+  if (ff && compact) ff.outerHTML = `<footer class="site-footer compact"><div class="wrap copyright">&copy; <span id="yr"></span> Stamp LTD. All rights reserved.</div></footer>`;
+  else if (ff) ff.outerHTML = `<footer class="site-footer"><div class="wrap"><div class="footer-grid">
     <div><a class="logo" href="index.html"><span class="logo-mark" aria-hidden="true"></span>Stamp</a>
       <p style="margin-top:.8rem">Identity, business and travel paperwork, handled by people who do it every day.</p></div>
     <div><h4>Services</h4><ul><li><a href="services.html#identity">Identity</a></li><li><a href="services.html#business">Business</a></li><li><a href="services.html#travel">Travel</a></li></ul></div>
@@ -58,6 +60,35 @@ function answersHTML(r) {
   return `<dl class="answers"><dt>Service</dt><dd>${esc(svcName(r.service))}</dd><dt>Sent</dt><dd>${fmtDate(r.created)}</dd>${rows}${files}</dl>`;
 }
 
+/* ---------- Service requirements (from SERVICES[].steps) ---------- */
+// Services card: the "What to bring" content
+function bringHTML(s) {
+  if (s.pending) return `<p>Requirements for this service are being finalised. <a href="contact.html">Contact us</a> and we will tell you what to bring.</p>`;
+  return `<ol class="req-steps">${s.steps.map(st => `<li><b>${st.title}</b>${st.who ? ` <span class="small">(${st.who.toLowerCase()})</span>` : ''}
+    ${st.note ? `<br>${st.note}` : ''}${st.items ? `<ul>${st.items.map(i => `<li>${i}</li>`).join('')}</ul>` : ''}</li>`).join('')}</ol>`;
+}
+
+// Request form: one question
+function fieldHTML(q) {
+  const id = 'q_' + q.id, attrs = `id="${id}" name="${id}" data-label="${q.label}" required`;
+  const ctl = q.type === 'textarea' ? `<textarea ${attrs}></textarea>`
+    : q.type === 'select' ? `<select ${attrs}><option value="">Choose one</option>${q.options.map(o => `<option>${o}</option>`).join('')}</select>`
+    : `<input ${attrs} type="${q.type || 'text'}">`;
+  const when = q.when ? ` data-when="q_${q.when[0]}" data-is="${q.when[1]}" hidden` : '';
+  return `<div class="field"${when}><label for="${id}">${q.label}${q.hint ? ` <span class="hint">(${q.hint})</span>` : ''}</label>${ctl}<div class="err"></div></div>`;
+}
+
+// Request form: the service's steps. "prepare" steps show a checklist + a tick box, never input fields.
+function stepsHTML(s) {
+  return s.steps.map((st, k) => `<div class="req-block"><h3>${k + 1}. ${st.title}${st.who ? `<span class="hint">${st.who}</span>` : ''}</h3>
+    ${st.note ? `<p class="muted">${st.note}</p>` : ''}
+    ${st.fields ? st.fields.map(fieldHTML).join('') : ''}
+    ${st.prepare ? `<p class="muted small" style="margin:0">Prepare these and bring them to us. Do not enter them here.</p>
+      <ul class="checklist">${st.items.map(i => `<li>${i}</li>`).join('')}</ul>
+      <div class="field"><label class="choice"><input type="checkbox" name="q_ready_${k}" data-label="${st.title}" required>${st.prepare}</label><div class="err"></div></div>` : ''}
+  </div>`).join('');
+}
+
 function wireSend(root, me, after) {
   root.querySelectorAll('form[data-send]').forEach(f => f.addEventListener('submit', e => {
     e.preventDefault();
@@ -80,7 +111,7 @@ const Pages = {
       SERVICES.filter(s => s.group === g).map(s => `<div class="acc">
         <button class="acc-btn" aria-expanded="false" aria-controls="p-${s.id}" id="b-${s.id}"><span>${s.name}<small>${s.blurb}</small></span></button>
         <div class="acc-panel" id="p-${s.id}" role="region" aria-labelledby="b-${s.id}">
-          <dl><dt>Who it is for</dt><dd>${s.who}</dd><dt>What to bring</dt><dd><ul>${s.bring.map(b => `<li>${b}</li>`).join('')}</ul></dd><dt>Timeline</dt><dd>${s.time}</dd></dl>
+          <dl><dt>Who it is for</dt><dd>${s.who}</dd><dt>What to bring</dt><dd>${bringHTML(s)}</dd>${s.note ? `<dt>Please note</dt><dd>${s.note}</dd>` : ''}<dt>Timeline</dt><dd>${s.time}</dd></dl>
           <a class="btn" href="request.html?service=${s.id}">${s.schedule ? 'Book a consultation' : 'Request this service'}</a></div></div>`).join('')).join('');
     el.querySelectorAll('.acc-btn').forEach(b => b.addEventListener('click', () => {
       const open = b.getAttribute('aria-expanded') === 'true';
@@ -106,6 +137,9 @@ const Pages = {
     svcBox.innerHTML = ['Identity', 'Business', 'Travel'].map(g => `<p class="hint" style="margin:.8rem 0 .3rem"><b>${g}</b></p>` + SERVICES.filter(s => s.group === g).map(s =>
       `<label class="choice"><input type="radio" name="service" value="${s.id}" ${s.id === pre ? 'checked' : ''}>${s.name}</label>`).join('')).join('');
     const chosen = () => SERVICES.find(s => s.id === (f.service.value || ''));
+    const box = document.getElementById('svc-steps');
+    const syncWhen = () => box.querySelectorAll('[data-when]').forEach(d => { const c = document.getElementById(d.dataset.when); d.hidden = !c || c.value !== d.dataset.is; });
+    box.addEventListener('change', syncWhen);
     const show = n => {
       i = n; steps.forEach((s, k) => s.classList.toggle('on', k === n)); bars.forEach((b, k) => b.classList.toggle('on', k <= n));
       const s = chosen();
@@ -113,8 +147,13 @@ const Pages = {
         document.querySelectorAll('.if-visa').forEach(e => e.hidden = s.id !== 'visa');
         document.querySelectorAll('.if-schedule').forEach(e => e.hidden = !s.schedule);
         document.querySelectorAll('.if-docs').forEach(e => e.hidden = !!s.schedule);
+        document.getElementById('docs-field').hidden = !!(s.schedule || s.steps); // tick boxes replace this question
+        if (box.dataset.svc !== s.id) { box.dataset.svc = s.id; box.innerHTML = s.steps ? stepsHTML(s) : ''; syncWhen(); } // only re-render when the service changes, so answers survive Back
+        const note = document.getElementById('svc-note'); note.hidden = !s.note; note.textContent = s.note || '';
         document.getElementById('chosen-name').textContent = s.name;
-        document.getElementById('bring-list').innerHTML = s.bring.map(b => `<li>${b}</li>`).join('');
+        const up = s.upload || [];
+        document.getElementById('bring-list').innerHTML = up.map(b => `<li>${b}</li>`).join('');
+        document.getElementById('bring-hint').hidden = !up.length;
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -133,6 +172,10 @@ const Pages = {
       a['Budget'] = f.budget.value;
       if (s.id === 'visa') a['Destination'] = f.destination.value;
       if (s.schedule) { a['Preferred date'] = f.date.value; a['Preferred time'] = f.time.value; a['Format'] = f.format.value; }
+      else if (s.steps) box.querySelectorAll('[data-label]').forEach(el => {
+        if (el.closest('[hidden]')) return;
+        a[el.dataset.label] = el.type === 'checkbox' ? 'Ready to bring' : el.value.trim();
+      });
       else a['Documents ready'] = (f.docs.value || 'Not answered');
       a['Phone'] = f.phone.value; if (f.notes.value.trim()) a['Notes'] = f.notes.value.trim();
       const r = { id: Store.newId(), service: s.id, name: f.fullname.value.trim(), email: f.email.value.trim().toLowerCase(), status: 'submitted',
